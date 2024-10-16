@@ -20,6 +20,9 @@ function multiply(num1, num2) {
 }
 
 function divide(num1, num2) {
+    if (num2 === 0) {
+        return 'ERR';
+    }
     return num1 / num2;
 }
 
@@ -44,7 +47,12 @@ function operate(num1, num2, op) {
 }
 
 function updateDisplay() {
-    display.textContent = currentValue;
+    if (currentValue === 'ERR') {
+        display.textContent = 'ERR DIVBY0';
+    }
+    else {
+        display.textContent = +Number.parseFloat(currentValue).toFixed(4);
+    }
 }
 
 // clearDisplay - clear button function;
@@ -102,9 +110,12 @@ function compute() {
             storedValue = currentValue;
         }
         currentValue = operate(storedValue, currentValue, storedOperator);
+        updateDisplay();
+        if (currentValue === 'ERR') {
+            currentValue = '0';
+        }
         storedValue = '';
         storedOperator = '';
-        updateDisplay();
     }
 }
 
