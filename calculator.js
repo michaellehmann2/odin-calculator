@@ -1,6 +1,7 @@
 let firstNumber;
 let secondNumber;
 let operator;
+let displayValue = '0';
 
 function add(num1, num2) {
     return num1 + num2;
@@ -34,3 +35,22 @@ function operate(num1, num2, op) {
             break;
     }
 }
+
+function updateDisplay(digit) {
+    if (displayValue === '0') {
+        displayValue = digit;
+    }
+    else {
+        displayValue += digit;
+    }
+    display.textContent = displayValue;
+}
+
+const display = document.querySelector('.display');
+const numberButtons = Array.from(document.querySelectorAll('.number'));
+
+numberButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+        updateDisplay(button.textContent);
+    })
+})
