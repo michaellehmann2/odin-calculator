@@ -14,6 +14,10 @@ let storedValue = '';
 //is only true immediately after a div by 0 operation.
 let errorDivBy0 = false;
 
+//max number of digits that can fit in the display. 
+//this number could be changed if the CSS was adjusted so that the display took up more pixels (or if the font size of the numbers was smaller)
+const MAX_DISPLAY_DIGITS = 12; 
+
 //helper functions for the 4 basic operations
 function add(num1, num2) {
     return num1 + num2;
@@ -65,8 +69,15 @@ function updateDisplay() {
         display.textContent = 'ERR DIVBY0';
     }
     else {
-        //the '+' is to get rid of the decimal point for non-decimal values.
-        display.textContent = +parseFloat(currentValue).toFixed(4);
+        let decimalIdx = currentValue.indexOf('.');
+        if (decimalIdx !== -1) {
+            let remainingDigitSpots = Math.max(0, MAX_DISPLAY_DIGITS - (decimalIdx+1));
+            //the '+' is to get rid of trailing values.
+            display.textContent = +parseFloat(currentValue).toFixed(remainingDigitSpots);
+        }
+        else {
+            display.textContent = currentValue;
+        }
     }
 }
 
@@ -109,7 +120,7 @@ function compute() {
         if (currentValue === '') {
             currentValue = storedValue;
         }
-        currentValue = operate(storedValue, currentValue, storedOperator);
+        currentValue = operate(storedValue, currentValue, storedOperator).toString();
         updateDisplay();
         if (errorDivBy0) {
             currentValue = '0';
