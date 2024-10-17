@@ -20,7 +20,14 @@ body {
     justify-content: space-around;
 }
 
+.top-section {
+    height: 100px;
+    display: flex;
+    align-items: center;
+}
+
 .display-area {
+    flex: 1;
     background-color: #202020;
     border-radius: 7.5px;
     height: 75px;
@@ -40,11 +47,10 @@ body {
     flex: 5;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: center;
 }
 
 .row {
-    flex: 1;
     display: flex;
     align-items: center;
 }
@@ -54,15 +60,15 @@ button {
     font-family: 'Ubuntu Mono', monospace;
     font-weight: lighter;
     font-size: 25px;
-    height: 70px;
+    height: 80px;
     background-color: #585450;
     color: white;
+    border-radius: 4px;
+    margin: 1px;
 }
 
-.number {
-}
 
-.clear, .zero {
-    flex: 3.35;
+.divide, .equals {
+    flex: 0.2928;
 }
 
