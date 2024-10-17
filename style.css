@@ -3,6 +3,7 @@ html, body {
 }
 
 body {
+    background-color: #001f1e;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -11,17 +12,28 @@ body {
 .calculator {
     height: 550px;
     width: 400px;
-    border: 2px black solid;
+    background-color: #c5c3af;
+    border: 10px #cbcab2 solid;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
 }
 
-.display {
-    border: 2px blue solid;
+.display-area {
+    background-color: #202020;
     border-radius: 7.5px;
     height: 75px;
+    display: flex;
+    align-items: end;
+    justify-content: end;
+}
+
+.display-numbers {
+    color: #57f542;
+    font-family: 'Ubuntu Mono', monospace;
+    font-weight: lighter;
+    font-size: 60px;
 }
 
 .button-rows {
@@ -34,11 +46,20 @@ body {
 .row {
     flex: 1;
     display: flex;
+    align-items: center;
 }
 
 button {
     flex: 1;
-    border-radius: 7.5px;
+    font-family: 'Ubuntu Mono', monospace;
+    font-weight: lighter;
+    font-size: 25px;
+    height: 70px;
+    background-color: #585450;
+    color: white;
+}
+
+.number {
 }
 
 .clear, .zero {

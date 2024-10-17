@@ -121,7 +121,7 @@ function compute() {
 }
 
 //get references to html elements and add listeners to the buttons.
-const display = document.querySelector('.display');
+const display = document.querySelector('.display-numbers');
 
 const numberButtons = document.querySelectorAll('.number');
 numberButtons.forEach((button) => {
