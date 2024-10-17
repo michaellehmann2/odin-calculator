@@ -1,12 +1,20 @@
-//represents the current value displayed on the screen
+//string representing the current value displayed on the screen.
+//will be the second operand in an equation.
+//NOTE: nums are stored as strings (until equation is actually evaluated) to make appending digits to the end simpler. could this be bad practice?
 let currentValue = '0';
 
-//represents the last operation button pressed
+//string representing the last operation button pressed
 let storedOperator = '';
 
-//represents the last value entered into the calculator before an operation button was pressed
+//string representing the last value entered into the calculator before an operation button was pressed.
+//will be the first operand in an equation.
 let storedValue = '';
 
+//boolean flag to represent division by 0 error.
+//is only true immediately after a div by 0 operation.
+let errorDivBy0 = false;
+
+//helper functions for the 4 basic operations
 function add(num1, num2) {
     return num1 + num2;
 }
@@ -19,13 +27,16 @@ function multiply(num1, num2) {
     return num1 * num2;
 }
 
+//throws errors when dividing by 0.
 function divide(num1, num2) {
     if (num2 === 0) {
-        return 'ERR';
+        errorDivBy0 = true;
     }
     return num1 / num2;
 }
 
+//uses 4 basic operation helper-functions to evaluate an operation
+//converts arguments to numbers first (since nums are stored as strings in all other places)
 function operate(num1, num2, op) {
     num1 = parseFloat(num1);
     num2 = parseFloat(num2);
@@ -46,29 +57,29 @@ function operate(num1, num2, op) {
     }
 }
 
+//draws the display on the page. 
+//shows a number or an error (if user divides by 0)
+//TODO: Work on display some. set a fixed num of digits? need to do CSS work first I think
 function updateDisplay() {
-    if (currentValue === 'ERR') {
+    if (errorDivBy0) {
         display.textContent = 'ERR DIVBY0';
     }
     else {
-        display.textContent = +Number.parseFloat(currentValue).toFixed(4);
+        //the '+' is to get rid of the decimal point for non-decimal values.
+        display.textContent = +parseFloat(currentValue).toFixed(4);
     }
 }
 
-// clearDisplay - clear button function;
-// set the currentValue to '0', and empty out the stored value and operation.
-// then, redraw the display
+//resets the state of the calculator. 
 function clearDisplay() {
     currentValue = '0';
     storedOperator = '';
     storedValue = '';
+    errorDivBy0 = false;
     updateDisplay();
 }
 
-// appendDigit? - number button
-// if the currentValue is a 0 (nothing has been typed), set currentValue to the digit
-// otherwise, append the digit to the end
-// then, redraw the display
+//'types' a new digit into the calculator
 function appendDigit(digit) {
     if (currentValue === '0') {
         currentValue = digit;
@@ -79,12 +90,8 @@ function appendDigit(digit) {
     updateDisplay();
 }
 
-// appendOperation - operator button function
-// if there's a stored value (e.g., you typed like 2 + 3 - or something)
-//   call compute() (to compute the 2 + 3 and store its result in currentValue)
-// store currentValue in storedValue
-// then, storedOperator = operator from button pressed
-// then, set currentValue to ''
+//'types' an operator into the calculator.
+//if another operation is waiting to be evaluated (e.g. user types '2 + 3' and then presses '-' without first pressing '='), evaluates that operation first.
 function appendOperator(operator) {
     if (storedValue) {
         compute();
@@ -94,16 +101,8 @@ function appendOperator(operator) {
     currentValue = '';
 }
 
-// compute - equals button function
-// if an operation is stored
-//   if there is a stored value
-//     call operate with storedValue, currentValue, and storedOperator
-//     store that result in currentValue
-//   else (no stored value)
-//     call operate with currentValue, currentValue, and storedOperator
-//     store that result in currentValue
-//   clear storedValue, storedOperator
-//   call updateDisplay
+//calls operate() to evaluate an expression, then updates display and state variables.
+//NOTE: if only one number has been typed (e.g. user types '2 +' and then presses '='), that number will be used as both operands
 function compute() {
     if (storedOperator) {
         if (storedValue === '') {
@@ -111,14 +110,16 @@ function compute() {
         }
         currentValue = operate(storedValue, currentValue, storedOperator);
         updateDisplay();
-        if (currentValue === 'ERR') {
+        if (errorDivBy0) {
             currentValue = '0';
+            errorDivBy0 = false;
         }
         storedValue = '';
         storedOperator = '';
     }
 }
 
+//get references to html elements and add listeners to the buttons.
 const display = document.querySelector('.display');
 
 const numberButtons = document.querySelectorAll('.number');
@@ -136,10 +137,9 @@ equalsButton.addEventListener('click', compute);
 
 const operatorButtons = document.querySelectorAll('.operator');
 operatorButtons.forEach((button) => {
+    //the name of the operation should be that button's first class. could cause errors if you changed class order.
     let classes = button.className.split(' ');
     let myOperation = classes[0];
 
-    button.addEventListener('click', () => {
-        appendOperator(myOperation);
-    });
+    button.addEventListener('click', () => appendOperator(myOperation));
 })
