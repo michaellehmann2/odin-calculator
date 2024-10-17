@@ -76,7 +76,17 @@ function updateDisplay() {
             display.textContent = +parseFloat(currentValue).toFixed(remainingDigitSpots);
         }
         else {
-            display.textContent = currentValue;
+            if (currentValue.length <= MAX_DISPLAY_DIGITS) {
+                display.textContent = currentValue;
+            }
+            else {
+                let exponentialVersion = parseFloat(currentValue).toExponential();
+                let decimalIdx = exponentialVersion.indexOf('.');
+                let eIdx = exponentialVersion.indexOf('e');
+                let numExponentialDigits = exponentialVersion.length - eIdx;
+                let trimmedExponentialVersion = parseFloat(currentValue).toExponential(MAX_DISPLAY_DIGITS - (1 + decimalIdx + numExponentialDigits));
+                display.textContent = trimmedExponentialVersion;
+            }
         }
     }
 }
@@ -96,7 +106,11 @@ function appendDigit(digit) {
         currentValue = digit;
     }
     else {
-        currentValue += digit;
+        //you cannot enter a number larger than 12 digits.
+        //'typing' when your number is already at 12 digits will do nothing.
+        if (currentValue.length < MAX_DISPLAY_DIGITS) {
+            currentValue += digit;
+        }
     }
     updateDisplay();
 }
