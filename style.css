@@ -67,8 +67,14 @@ button {
     margin: 1px;
 }
 
+.clear {
+    background-color: #8b1a00;
+}
 
 .divide, .equals {
     flex: 0.2928;
 }
 
+.operator, .equals {
+    background-color: #BD7D33;
+}
