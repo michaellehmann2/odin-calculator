@@ -93,7 +93,7 @@ function appendDigit(digit) {
 //'types' an operator into the calculator.
 //if another operation is waiting to be evaluated (e.g. user types '2 + 3' and then presses '-' without first pressing '='), evaluates that operation first.
 function appendOperator(operator) {
-    if (storedValue) {
+    if (storedOperator !== '') {
         compute();
     }
     storedValue = currentValue;
@@ -101,12 +101,13 @@ function appendOperator(operator) {
     currentValue = '';
 }
 
-//calls operate() to evaluate an expression, then updates display and state variables.
+//if an operator button has been pressed, calls operate() to evaluate an expression, then updates display and state variables.
 //NOTE: if only one number has been typed (e.g. user types '2 +' and then presses '='), that number will be used as both operands
 function compute() {
     if (storedOperator) {
-        if (storedValue === '') {
-            storedValue = currentValue;
+        //if there's only one value, duplicate it to use it as both operands.
+        if (currentValue === '') {
+            currentValue = storedValue;
         }
         currentValue = operate(storedValue, currentValue, storedOperator);
         updateDisplay();
