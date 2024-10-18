@@ -63,7 +63,6 @@ function operate(num1, num2, op) {
 
 //draws the display on the page. 
 //shows a number or an error (if user divides by 0)
-//TODO: Work on display some. set a fixed num of digits? need to do CSS work first I think
 function updateDisplay() {
     if (errorDivBy0) {
         display.textContent = 'ERR DIVBY0';
@@ -71,10 +70,13 @@ function updateDisplay() {
     else {
         let decimalIdx = currentValue.indexOf('.');
         if (decimalIdx !== -1) {
+            //if the num has a decimal, check if it's in exponential form
             let eIdx = currentValue.indexOf('e');
             if (eIdx !== -1) {
+                //if so, trim it so it fits into 12 digits
                 let numExponentialDigits = currentValue.length - eIdx;
-                let trimmedExponentialVersion = parseFloat(currentValue).toExponential(MAX_DISPLAY_DIGITS - (1 + decimalIdx + numExponentialDigits));
+                //2 digits are reserved for the initial number and the decimal point.
+                let trimmedExponentialVersion = parseFloat(currentValue).toExponential(MAX_DISPLAY_DIGITS - (2 + numExponentialDigits));
                 display.textContent = trimmedExponentialVersion;
             }
 
@@ -84,16 +86,21 @@ function updateDisplay() {
                 display.textContent = +parseFloat(currentValue).toFixed(remainingDigitSpots);
             }
         }
+
+        //no decimals
         else {
+            //if the number fits in the display, display it
             if (currentValue.length <= MAX_DISPLAY_DIGITS) {
                 display.textContent = currentValue;
             }
             else {
+                //if it doesn't fit, put it in exponential form
                 let exponentialVersion = parseFloat(currentValue).toExponential();
-                let decimalIdx = exponentialVersion.indexOf('.');
+                //find out how many digits the exponent (and the 'e+') takes up
                 let eIdx = exponentialVersion.indexOf('e');
                 let numExponentialDigits = exponentialVersion.length - eIdx;
-                let trimmedExponentialVersion = parseFloat(currentValue).toExponential(MAX_DISPLAY_DIGITS - (1 + decimalIdx + numExponentialDigits));
+                //put the number back in exponential form, but leave room for the exponential digits and the 2 initial digits
+                let trimmedExponentialVersion = parseFloat(currentValue).toExponential(MAX_DISPLAY_DIGITS - (2 + numExponentialDigits));
                 display.textContent = trimmedExponentialVersion;
             }
         }
