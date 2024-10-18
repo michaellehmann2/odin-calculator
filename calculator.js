@@ -71,9 +71,18 @@ function updateDisplay() {
     else {
         let decimalIdx = currentValue.indexOf('.');
         if (decimalIdx !== -1) {
-            let remainingDigitSpots = Math.max(0, MAX_DISPLAY_DIGITS - (decimalIdx+1));
-            //the '+' is to get rid of trailing values.
-            display.textContent = +parseFloat(currentValue).toFixed(remainingDigitSpots);
+            let eIdx = currentValue.indexOf('e');
+            if (eIdx !== -1) {
+                let numExponentialDigits = currentValue.length - eIdx;
+                let trimmedExponentialVersion = parseFloat(currentValue).toExponential(MAX_DISPLAY_DIGITS - (1 + decimalIdx + numExponentialDigits));
+                display.textContent = trimmedExponentialVersion;
+            }
+
+            else {
+                let remainingDigitSpots = Math.max(0, MAX_DISPLAY_DIGITS - (decimalIdx+1));
+                //the '+' is to get rid of trailing values.
+                display.textContent = +parseFloat(currentValue).toFixed(remainingDigitSpots);
+            }
         }
         else {
             if (currentValue.length <= MAX_DISPLAY_DIGITS) {
