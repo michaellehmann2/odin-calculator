@@ -16,7 +16,13 @@ let errorDivBy0 = false;
 
 //max number of digits that can fit in the display. 
 //this number could be changed if the CSS was adjusted so that the display took up more pixels (or if the font size of the numbers was smaller)
-const MAX_DISPLAY_DIGITS = 12; 
+const MAX_DISPLAY_DIGITS = 12;
+let temp = '';
+for (let i = 0; i < MAX_DISPLAY_DIGITS; i++) {
+    temp += '9';
+}
+const MAX_DISPLAYABLE_VALUE = parseFloat(temp);
+
 
 //helper functions for the 4 basic operations
 function add(num1, num2) {
@@ -61,6 +67,26 @@ function operate(num1, num2, op) {
     }
 }
 
+//helper function for updateDisplay
+function formatCurValForDisplay() {
+    //if number is bigger than max possible value, convert it to exponential, then trim it to make sure it fits in display area
+     if (parseFloat(currentValue) >= MAX_DISPLAYABLE_VALUE) {
+        let exponentialVersion = parseFloat(currentValue).toExponential();
+        //find out how many digits the exponent (and the 'e+') takes up
+        let eIdx = exponentialVersion.indexOf('e');
+        let numExponentialDigits = exponentialVersion.length - eIdx;
+        //put the number back in exponential form, but leave room for the exponential digits and the 2 initial digits
+        return parseFloat(currentValue).toExponential(MAX_DISPLAY_DIGITS - (2 + numExponentialDigits));
+     }
+     //otherwise, find out how many digits are used before (and including) the decimal, and then shrink the after-decimal part to fit.
+     else {
+        let decimalIdx = currentValue.indexOf('.')
+        let remainingDigitSpots = Math.max(0, MAX_DISPLAY_DIGITS - (decimalIdx+1));
+        //the '+' is to get rid of trailing values.
+        return +parseFloat(currentValue).toFixed(remainingDigitSpots);
+     }
+}
+
 //draws the display on the page. 
 //shows a number or an error (if user divides by 0)
 function updateDisplay() {
@@ -68,41 +94,11 @@ function updateDisplay() {
         display.textContent = 'ERR DIVBY0';
     }
     else {
-        let decimalIdx = currentValue.indexOf('.');
-        if (decimalIdx !== -1) {
-            //if the num has a decimal, check if it's in exponential form
-            let eIdx = currentValue.indexOf('e');
-            if (eIdx !== -1) {
-                //if so, trim it so it fits into 12 digits
-                let numExponentialDigits = currentValue.length - eIdx;
-                //2 digits are reserved for the initial number and the decimal point.
-                let trimmedExponentialVersion = parseFloat(currentValue).toExponential(MAX_DISPLAY_DIGITS - (2 + numExponentialDigits));
-                display.textContent = trimmedExponentialVersion;
-            }
-
-            else {
-                let remainingDigitSpots = Math.max(0, MAX_DISPLAY_DIGITS - (decimalIdx+1));
-                //the '+' is to get rid of trailing values.
-                display.textContent = +parseFloat(currentValue).toFixed(remainingDigitSpots);
-            }
+        if (currentValue.length <= MAX_DISPLAY_DIGITS) {
+            display.textContent = +parseFloat(currentValue);
         }
-
-        //no decimals
         else {
-            //if the number fits in the display, display it
-            if (currentValue.length <= MAX_DISPLAY_DIGITS) {
-                display.textContent = currentValue;
-            }
-            else {
-                //if it doesn't fit, put it in exponential form
-                let exponentialVersion = parseFloat(currentValue).toExponential();
-                //find out how many digits the exponent (and the 'e+') takes up
-                let eIdx = exponentialVersion.indexOf('e');
-                let numExponentialDigits = exponentialVersion.length - eIdx;
-                //put the number back in exponential form, but leave room for the exponential digits and the 2 initial digits
-                let trimmedExponentialVersion = parseFloat(currentValue).toExponential(MAX_DISPLAY_DIGITS - (2 + numExponentialDigits));
-                display.textContent = trimmedExponentialVersion;
-            }
+            display.textContent = formatCurValForDisplay();
         }
     }
 }
